@@ -11,10 +11,25 @@
 #ifndef ML_FRAME_H
 #define ML_FRAME_H
 
-#define uint32_t unsigned int
-#define uint16_t unsigned short
-#define uint8_t unsigned char
+#include <Matrix.h>
 
-#define NULL 0
+typedef struct function_t function_t;
+struct function_t
+{
+    Matrix *(*calc)(Matrix *);          // 函数本身
+    Matrix *(*derivative)(Matrix *);    // 该函数的导数运算
+};
+
+typedef struct Layer_t Layer_t;
+struct Layer_t
+{
+    int input_size;                    // 输入层大小
+    int output_size;                   // 输出层大小
+
+    // 激活函数指针
+    function_t activation;
+
+    Matrix* (*forward)(Layer_t* self, Matrix* input);
+};
 
 #endif

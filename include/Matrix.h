@@ -18,9 +18,11 @@ typedef struct
     int col;
 }Matrix;
 
-Matrix* get_Matrix(int row, int col);
+Matrix* get_Matrix(double* data, int row, int col);
+Matrix* get_Matrix_Zeros(int row, int col);
 Matrix* get_Matrix_eye(int n);
 Matrix* get_Matrix_n(int row, int col, int n);
+Matrix* get_Matrix_rand(int row, int col);
 
 int Matrix_is_equal(Matrix* a, Matrix* b);
 
@@ -29,6 +31,8 @@ Matrix* Matrix_sub(Matrix* a, Matrix* b);
 Matrix* Matrix_mul(Matrix* a, Matrix* b);
 Matrix* Matrix_mul_num(Matrix* a, double num);
 
-void print_Matrix(Matrix* matrix);
+int print_Matrix(Matrix* matrix);
+
+void Matrix_free(Matrix* matrix);
 
 #endif
