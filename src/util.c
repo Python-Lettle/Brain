@@ -28,7 +28,8 @@ double sigmoid(double x)
 
 double sigmoid_derivative(double x)
 {
-    return x * (1 - x);
+    double sig = sigmoid(x);
+    return sig * (1 - sig);
 }
 
 Matrix* sigmoid_Matrix(Matrix* x)

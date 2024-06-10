@@ -30,6 +30,9 @@ Matrix* Matrix_add(Matrix* a, Matrix* b);
 Matrix* Matrix_sub(Matrix* a, Matrix* b);
 Matrix* Matrix_mul(Matrix* a, Matrix* b);
 Matrix* Matrix_mul_num(Matrix* a, double num);
+Matrix* Matrix_mul_hadamard(Matrix* a, Matrix* b);
+
+Matrix* Matrix_transpose(Matrix* a);
 
 int print_Matrix(Matrix* matrix);
 

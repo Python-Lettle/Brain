@@ -19,19 +19,35 @@ Matrix* x_func (Matrix* x)
 {
     return x;
 }
+Matrix* x_de_func (Matrix* x)
+{
+    return 1;
+}
+
+// 自定义模型正向传播方式
+Matrix* Model_forward(Model* model, Matrix* input)
+{
+    Matrix* output = input;
+    for (int i = 0; i < model->layer_count; i++)
+    {
+        // printf("Layer %d\n", i);
+        output = model->layers[i]->forward(model->layers[i], output);
+    }
+    return output;
+}
 
 int main (void)
 {
     // 数据初始化
     double data_double[2][1] = {{2},{8}};
-    // double label_double[1][1] = {{1}};
+    double label_double[1][1] = {{1}};
     Matrix* data = get_Matrix((double*)data_double, 2, 1);
-    // Matrix* label = get_Matrix((double**)label_double, 1, 1);
+    Matrix* label = get_Matrix((double**)label_double, 1, 1);
 
     // 激活函数初始化
     function_t activation = {sigmoid_Matrix, sigmoid_derivative_Matrix};
 
-    function_t activation_x = {x_func, x_func};
+    function_t activation_x = {x_func, x_de_func};
 
     // 模型每层初始化
     Linear* linear = Linear_new(2, 3, activation);
@@ -51,10 +67,17 @@ int main (void)
 
     Linear* linears[] = {linear, linear2};
     Model * model = Model_new(linears, 2);
+    model->forward = Model_forward;
 
-    // double lr = 0.1;
+    double lr = 0.1;
 
-    model->forward(model, data);
+    for (int i=0; i<5; i++)
+    {
+        printf("Train epoch %d\n", i+1);
+        Model* y_pred = model->forward(model, data);
+        printf("Model loss = %f\n", model->backward(model, y_pred, label, lr));
+    }
+    
 
     return 0;
 }

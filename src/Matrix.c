@@ -204,7 +204,7 @@ Matrix* Matrix_sub(Matrix* a, Matrix* b)
 Matrix* Matrix_mul(Matrix* a, Matrix* b)
 {
     if (a->col != b->row) {
-        printf("Matrix_mul: a.col != b.row\n");
+        printf("Matrix_mul: a.col != b.row, now a is (%d,%d), b is (%d,%d)\n",a->row, a->col,b->row,b->col);
         return NULL;
     }
     
@@ -239,6 +239,40 @@ Matrix* Matrix_mul_num(Matrix* a, double num)
     
     return mat;
 }
+
+Matrix* Matrix_mul_hadamard(Matrix* a, Matrix* b)
+{
+    if (a->row != b->row || a->col != b->col) {
+        printf("Matrix_mul_hadamard: a.row != b.row || a.col != b.col, now a is (%d,%d), b is (%d,%d)\n",a->row, a->col,b->row,b->col);
+        return NULL;
+    }
+    
+    Matrix* mat = get_Matrix_Zeros(a->row, a->col);
+    if (mat == NULL) return NULL;
+    
+    for (int i = 0; i < a->row; i++) {
+        for (int j = 0; j < a->col; j++) {
+            mat->data[i][j] = a->data[i][j] * b->data[i][j];
+        }
+    }
+    
+    return mat;
+}
+
+Matrix* Matrix_transpose(Matrix* a)
+{
+    Matrix* mat = get_Matrix_Zeros(a->col, a->row);
+    if (mat == NULL) return NULL;
+
+    for (int i = 0; i < a->row; i++) {
+        for (int j = 0; j < a->col; j++) {
+            mat->data[j][i] = a->data[i][j];
+        }
+    }
+    
+    return mat;
+}
+
 
 int print_Matrix(Matrix* matrix)
 {

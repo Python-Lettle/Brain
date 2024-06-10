@@ -21,6 +21,9 @@ struct Linear
     Matrix* weights;        // 权重
     Matrix* bias;           // 偏置
 
+    Matrix* input;      // 该层的输入矩阵 (用于反向传播)
+    Matrix* output;     // 该层的输出矩阵 (用于反向传播)
+
     // 激活函数指针
     function_t activation;
 

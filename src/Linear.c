@@ -15,18 +15,18 @@
 
 Matrix* Linear_forward (Linear* self, Matrix* input)
 {
-    printf("正向传播\n");
+    self->input = input;
     // mul = weights * input
     Matrix* Z = Matrix_mul(self->weights, input);
 
-    printf("1. 计算隐层的加权输入 Z:\n");
-    print_Matrix(Z);
+    // printf("1. 计算隐层的加权输入 Z:\n");
+    // print_Matrix(Z);
 
-    Matrix* H = Matrix_add(Z, self->bias);
-    H = self->activation.calc(H);
+    self->output = Matrix_add(Z, self->bias);
+    Matrix* H = self->activation.calc(self->output);
     
-    printf("2. 计算隐层的激活值 H (包括偏置):\n");
-    print_Matrix(H);
+    // printf("2. 计算隐层的激活值 H (包括偏置):\n");
+    // print_Matrix(H);
 
     
     return H;

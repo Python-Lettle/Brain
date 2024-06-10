@@ -24,7 +24,7 @@ struct Model
     void* (*loss) (Matrix *pred, Matrix *label);
 
     Matrix* (*forward)(Model *model, Matrix *input);
-    void (*backward)(Model *model);
+    double (*backward)(Model* model, Matrix* y_pred, Matrix* target, double learning_rate);
 };
 
 Model* Model_new(Linear **layers, int layer_count);
