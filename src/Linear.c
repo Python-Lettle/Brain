@@ -49,9 +49,8 @@ void Linear_init(Linear *layer, int in_features, int out_features, function_t ac
     layer->in_features = in_features;
     layer->out_features = out_features;
 
-    Matrix* weight = get_Matrix_rand(in_features, out_features);
-    // Matrix* bias = get_Matrix_rand(1, out_features);
-    Matrix* bias = get_Matrix_Zeros(1, out_features);
+    Matrix* weight = get_Matrix_rand(out_features, in_features);
+    Matrix* bias = get_Matrix_rand(out_features, 1);
 
     layer->weights = weight;
     layer->bias = bias;

@@ -14,6 +14,7 @@
 #include <util.h>
 
 #include <stdio.h>
+#include <time.h>
 
 Matrix* x_func (Matrix* x)
 {
@@ -38,6 +39,10 @@ Matrix* Model_forward(Model* model, Matrix* input)
 
 int main (void)
 {
+    /* 初始化随机数发生器 */
+    time_t t;
+    srand((unsigned) time(&t));
+
     // 数据初始化
     double data_double[2][1] = {{2},{8}};
     double label_double[1][1] = {{1}};
@@ -53,17 +58,17 @@ int main (void)
     Linear* linear = Linear_new(2, 3, activation);
     Linear* linear2 = Linear_new(3, 1, activation_x);
 
-    double weights_double[3][2] = {{0.5, 0.2}, {0.7, 0.4}, {0.3, 0.3}};
-    linear->weights = get_Matrix((double*)weights_double, 3, 2);
+    // double weights_double[3][2] = {{0.5, 0.2}, {0.7, 0.4}, {0.3, 0.3}};
+    // linear->weights = get_Matrix((double*)weights_double, 3, 2);
 
-    double bias_double[3][1] = {{0.1}, {0.1}, {0.1}};
-    linear->bias = get_Matrix((double*)bias_double, 3, 1);
+    // double bias_double[3][1] = {{0.1}, {0.1}, {0.1}};
+    // linear->bias = get_Matrix((double*)bias_double, 3, 1);
 
-    double weights_double2[1][3] = {{0.5, 0.3, 0.6}};
-    linear2->weights = get_Matrix((double*)weights_double2, 1, 3);
+    // double weights_double2[1][3] = {{0.5, 0.3, 0.6}};
+    // linear2->weights = get_Matrix((double*)weights_double2, 1, 3);
 
-    double bias_double2[1][1] = {{0.1}};
-    linear2->bias = get_Matrix((double*)bias_double2, 1, 1);
+    // double bias_double2[1][1] = {{0.1}};
+    // linear2->bias = get_Matrix((double*)bias_double2, 1, 1);
 
     Linear* linears[] = {linear, linear2};
     Model * model = Model_new(linears, 2);
@@ -71,13 +76,24 @@ int main (void)
 
     double lr = 0.1;
 
-    for (int i=0; i<5; i++)
+    // 测试输出
+    Matrix* y_pred = model->forward(model, data);
+    printf("Before train model output = \n");
+    print_Matrix(y_pred);
+
+    printf("------------------------------\n");
+    for (int i=0; i<10; i++)
     {
         printf("Train epoch %d\n", i+1);
         Model* y_pred = model->forward(model, data);
         printf("Model loss = %f\n", model->backward(model, y_pred, label, lr));
     }
-    
+    printf("------------------------------\n");
+
+    // 测试输出
+    y_pred = model->forward(model, data);
+    printf("Trained model output = \n");
+    print_Matrix(y_pred);
 
     return 0;
 }
