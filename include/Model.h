@@ -11,7 +11,6 @@
 #ifndef FRAME_MODEL_H
 #define FRAME_MODEL_H
 
-#include <frame.h>
 #include <Matrix.h>
 #include <Linear.h>
 
@@ -28,6 +27,5 @@ struct Model
 };
 
 Model* Model_new(Linear **layers, int layer_count);
-
 
 #endif

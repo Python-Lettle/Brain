@@ -11,12 +11,14 @@
 #ifndef FRAME_MATRIX_H
 #define FRAME_MATRIX_H
 
-typedef struct
+typedef struct Matrix Matrix;
+struct Matrix
 {
     double** data;      // 二维数组
     int row;
     int col;
-}Matrix;
+    Matrix* T;
+};
 
 Matrix* get_Matrix(double* data, int row, int col);
 Matrix* get_Matrix_Zeros(int row, int col);
@@ -35,6 +37,7 @@ Matrix* Matrix_mul_hadamard(Matrix* a, Matrix* b);
 Matrix* Matrix_transpose(Matrix* a);
 
 int print_Matrix(Matrix* matrix);
+int save_Matrix(Matrix* matrix, const char* path);
 
 void Matrix_free(Matrix* matrix);
 

@@ -7,23 +7,16 @@
  * gitee: https://gitee.com/lettle/
  * github: https://github.com/python-lettle/
  */
-#include <frame.h>
-#include <Linear.h>
-#include <Matrix.h>
-#include <Model.h>
-#include <util.h>
+#include <brain.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
-Matrix* x_func (Matrix* x)
-{
-    return x;
-}
-Matrix* x_de_func (Matrix* x)
-{
-    return 1;
-}
+#define BATCH_SIZE 20
+#define DATA_DIM 1
+#define LABEL_DIM 1
+
 
 // 自定义模型正向传播方式
 Matrix* Model_forward(Model* model, Matrix* input)
@@ -44,56 +37,61 @@ int main (void)
     srand((unsigned) time(&t));
 
     // 数据初始化
-    double data_double[2][1] = {{2},{8}};
-    double label_double[1][1] = {{1}};
-    Matrix* data = get_Matrix((double*)data_double, 2, 1);
-    Matrix* label = get_Matrix((double**)label_double, 1, 1);
+    Matrix* data = load_csv("data/test/data.csv", BATCH_SIZE, DATA_DIM);
+    Matrix* label = load_csv("data/test/target.csv", BATCH_SIZE, LABEL_DIM);
+
+    // 输出数据
+    // printf("Data = \n");
+    // print_Matrix(data);
+    // printf("Label = \n");
+    // print_Matrix(label);
 
     // 激活函数初始化
-    function_t activation = {sigmoid_Matrix, sigmoid_derivative_Matrix};
-
-    function_t activation_x = {x_func, x_de_func};
+    function_t activation_sigmoid = {sigmoid_Matrix, sigmoid_derivative_Matrix};
+    function_t activation_relu = {relu_Matrix, relu_derivative_Matrix};
+    function_t activation_x = {x_func, x_derivative_func};
 
     // 模型每层初始化
-    Linear* linear = Linear_new(2, 3, activation);
-    Linear* linear2 = Linear_new(3, 1, activation_x);
+    Linear* linear = Linear_new(DATA_DIM, 8, activation_sigmoid);
+    Linear* linear2 = Linear_new(8, 20, activation_relu);
+    Linear* linear3 = Linear_new(20, LABEL_DIM, activation_x);
 
-    // double weights_double[3][2] = {{0.5, 0.2}, {0.7, 0.4}, {0.3, 0.3}};
-    // linear->weights = get_Matrix((double*)weights_double, 3, 2);
-
-    // double bias_double[3][1] = {{0.1}, {0.1}, {0.1}};
-    // linear->bias = get_Matrix((double*)bias_double, 3, 1);
-
-    // double weights_double2[1][3] = {{0.5, 0.3, 0.6}};
-    // linear2->weights = get_Matrix((double*)weights_double2, 1, 3);
-
-    // double bias_double2[1][1] = {{0.1}};
-    // linear2->bias = get_Matrix((double*)bias_double2, 1, 1);
-
-    Linear* linears[] = {linear, linear2};
-    Model * model = Model_new(linears, 2);
+    Linear* linears[] = {linear, linear2, linear3};
+    Model * model = Model_new(linears, 3);
     model->forward = Model_forward;
+    model->backward = optim_SGD;
 
-    double lr = 0.1;
+    double lr = 0.0001;
 
     // 测试输出
     Matrix* y_pred = model->forward(model, data);
-    printf("Before train model output = \n");
-    print_Matrix(y_pred);
+
+    // printf("Loss = %f\n", model->backward(model, y_pred, label, lr));
+    // model->backward(model, y_pred, label, lr);
+    // printf("Before train model output = \n");
+    // print_Matrix(y_pred);
 
     printf("------------------------------\n");
-    for (int i=0; i<10; i++)
+    int epochs = 1;
+    double minloss = 999999;
+    for (int i=0; i<epochs; i++)
     {
-        printf("Train epoch %d\n", i+1);
-        Model* y_pred = model->forward(model, data);
-        printf("Model loss = %f\n", model->backward(model, y_pred, label, lr));
+        Matrix* y_pred = model->forward(model, data);
+        double loss = model->backward(model, y_pred, label, lr);
+        if (loss < minloss) minloss = loss;
+        if (i%200==199 || i==0)
+            printf("Epoch(%d/%d) loss = %f\n", i+1, epochs, loss);
     }
     printf("------------------------------\n");
-
-    // 测试输出
+    
+    printf("Min loss = %f\n", minloss);
+    // 输出结果保存
     y_pred = model->forward(model, data);
-    printf("Trained model output = \n");
-    print_Matrix(y_pred);
+    printf("Model output saved. \n");
+    save_Matrix(y_pred, "pred.csv");
+
+    // printf("Target = \n");
+    // print_Matrix(label);
 
     return 0;
 }

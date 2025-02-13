@@ -17,32 +17,25 @@ Matrix* Linear_forward (Linear* self, Matrix* input)
 {
     self->input = input;
     // mul = weights * input
-    Matrix* Z = Matrix_mul(self->weights, input);
-
+    Matrix* Z = Matrix_mul(input, Matrix_transpose(self->weights));
     // printf("1. 计算隐层的加权输入 Z:\n");
     // print_Matrix(Z);
+    // 将偏置加到每一行上
+    for (int i=0; i<Z->row; i++) {
+        for (int j=0; j<Z->col; j++) {
+            Z->data[i][j] += self->bias->data[0][j];
+        }
+    }
+    self->output = Z;
+    
 
-    self->output = Matrix_add(Z, self->bias);
     Matrix* H = self->activation.calc(self->output);
     
     // printf("2. 计算隐层的激活值 H (包括偏置):\n");
     // print_Matrix(H);
 
-    
     return H;
 }
-
-void Linear_backward (Linear* self, double learning_rate, Matrix* y_pred, Matrix* y_true, Matrix* last_weight, Matrix* next_value)
-{
-    
-}
-
-void set_parameters(Linear *layer, Matrix* weight, Matrix* bias)
-{
-    layer->weights = weight;
-    layer->bias = bias;
-}
-
 
 void Linear_init(Linear *layer, int in_features, int out_features, function_t activation)
 {
@@ -50,7 +43,7 @@ void Linear_init(Linear *layer, int in_features, int out_features, function_t ac
     layer->out_features = out_features;
 
     Matrix* weight = get_Matrix_rand(out_features, in_features);
-    Matrix* bias = get_Matrix_rand(out_features, 1);
+    Matrix* bias = get_Matrix_Zeros(1, out_features);
 
     layer->weights = weight;
     layer->bias = bias;

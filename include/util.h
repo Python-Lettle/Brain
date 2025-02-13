@@ -18,9 +18,16 @@ int get_random_int(int min, int max);
 
 double sigmoid(double x);
 double sigmoid_derivative(double x);
+double relu(double x);
+double relu_derivative(double x);
 
 Matrix* sigmoid_Matrix(Matrix* x);
 Matrix* sigmoid_derivative_Matrix(Matrix* x);
 
+Matrix* relu_Matrix(Matrix* x);
+Matrix* relu_derivative_Matrix(Matrix* x);
+
+Matrix* x_func (Matrix* x);
+Matrix* x_derivative_func (Matrix* x);
 
 #endif
